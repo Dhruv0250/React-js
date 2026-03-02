@@ -8,6 +8,7 @@ function App() {
 
   return (
     <>
+    <h1>this is a website by react</h1>
     </>
   )
 }
