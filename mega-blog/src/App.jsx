@@ -3,6 +3,8 @@ import './App.css'
 import { useDispatch } from 'react-redux'
 import authService from './appwrite/auth'
 import { Login, Logout } from './store/authSlice'
+import Header from './Components/Header/header'
+import Footer from './Components/Footer/Footer'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -21,22 +23,16 @@ function App() {
   }, [dispatch])
 
   return !loading ? (
-    <div className='min-h-screen flex flex-col justify-between bg-gray-50'>
-      <header className='bg-white shadow'>
-        {/* Header content */}
-      </header>
-      <main className='grow container mx-auto p-4'>
-        {/* Main content */}
-      </main>
-      <footer className='bg-gray-800 text-white'>
-        {/* Footer content */}
-      </footer>
+     <div className='min-h-screen flex flex-wrap content-between bg-gray-400'>
+      <div className='w-full block'>
+        <Header />
+        <main>
+        {/* TODO:  <Outlet /> */}
+        </main>
+        <Footer />
+      </div>
     </div>
-  ) : (
-    <div className='flex items-center justify-center min-h-screen'>
-      <div>Loading...</div>
-    </div>
-  )
+  ) : null
 }
 
 export default App
