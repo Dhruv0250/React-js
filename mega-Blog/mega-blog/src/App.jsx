@@ -1,56 +1,39 @@
-import conf from "../conf/Conf.js";
-import { Client, Account, ID } from "appwrite";
+import React ,{useState,useEffect} from "react";
+import { useDispatch } from "react-redux";
+import "./App.css"
+import authService from "./appwrite/auth";
+import { Login, Logout } from "./store/AuthSlice";
+import { Outlet } from "react-router-dom";
+import Header from "./components/Header/Header";
+import Footer from "./components/footer/Footer";
 
-export class AuthService {
-  client = new Client();
-  account;
+function App(){
+const [loading,setLoading]=useState(true);
+const dispatch=useDispatch();
 
-  constructor() {
-    this.client
-      .setEndpoint(conf.appwriteUrl)
-      .setProject(conf.appwriteProjectId);
-    this.account = new Account(this.client);
-  }
-  async createAccount({ email, passward, name }) {
-    try {
-      const userAccount = await this.account.create(
-        ID.unique(),
-        email,
-        passward,
-        name,
-      );
-      if (userAccount) {
-        return this.login({ email, passward });
-      } else {
-        return userAccount;
-      }
-    } catch (error) {
-      throw error;
+useEffect(()=>{
+  authService.getCurrentUser()
+  .then((userData)=>{
+    if(userData){
+      dispatch(Login({userData}));
+    }else{
+      dispatch(Logout(userData))
     }
-  }
-  async login({ email, passward }) {
-    try {
-      return await this.account.createEmailPasswordSession(email, passward);
-    } catch (error) {
-      throw error;
-    }
-  }
-  async getCurrentUser() {
-    try {
-      return await this.account.get();
-    } catch (error) {
-      throw error;
-    }
-    return null;
-  }
-  async logout() {
-    try {
-      return await this.account.deleteSessions();
-    } catch (error) {
-      throw error;
-    }
-  }
+  })
+  .finally(()=>setLoading(false))
+},[])
+
+return !loading ?  (
+<div className="min-h-screen flex flex-wrap content-between bg-gray-400">
+  <div className="w-full block" >
+    <Header/> 
+    <main>
+      <Outlet/>
+    </main>
+    <Footer/>
+  </div>
+</div>
+) : null;
+
 }
-const authService = new AuthService();
-
-export default authService;
+export default App;
